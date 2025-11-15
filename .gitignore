@@ -201,6 +201,9 @@ p2-front/lambda-function.zip
 **/*.tar.gz
 **/*.tgz
 
+# Arquivos de comandos com credenciais
+p2-cloud-terraform/comando-docker-run*.txt
+
 # ===========================================
 # Arquivos de Teste e Desenvolvimento
 # ===========================================
