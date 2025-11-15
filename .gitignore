@@ -1,0 +1,229 @@
+# ===========================================
+# P2Cloud - GitIgnore Global
+# Protege variáveis de ambiente e arquivos sensíveis
+# ===========================================
+
+# ===========================================
+# Variáveis de Ambiente (TODOS OS COMPONENTES)
+# ===========================================
+
+# Backend - Java Spring Boot
+p2-back/.env
+p2-back/.env.local
+p2-back/.env.production
+p2-back/.env.*.local
+
+# Frontend - Node.js
+p2-front/.env
+p2-front/.env.local
+p2-front/.env.production
+p2-front/.env.development
+p2-front/.env.*.local
+
+# Terraform - AWS
+p2-cloud-terraform/app.env
+p2-cloud-terraform/.env
+p2-cloud-terraform/.env.local
+p2-cloud-terraform/terraform.tfvars
+p2-cloud-terraform/*.tfvars
+p2-cloud-terraform/*.auto.tfvars
+
+# Arquivos de configuração com credenciais
+**/.aws/
+**/credentials
+**/config
+
+# ===========================================
+# Terraform - Estado e Arquivos Sensíveis
+# ===========================================
+
+# Estado do Terraform (contém informações sensíveis)
+p2-cloud-terraform/.terraform/
+p2-cloud-terraform/.terraform.lock.hcl
+p2-cloud-terraform/terraform.tfstate
+p2-cloud-terraform/terraform.tfstate.backup
+p2-cloud-terraform/terraform.tfstate.*
+p2-cloud-terraform/*.tfstate
+p2-cloud-terraform/*.tfstate.*
+
+# Cache e arquivos temporários do Terraform
+p2-cloud-terraform/.terraformrc
+p2-cloud-terraform/terraform.rc
+p2-cloud-terraform/override.tf
+p2-cloud-terraform/override.tf.json
+p2-cloud-terraform/*_override.tf
+p2-cloud-terraform/*_override.tf.json
+
+# ===========================================
+# Backend - Java/Maven
+# ===========================================
+
+p2-back/target/
+p2-back/.mvn/wrapper/maven-wrapper.jar
+p2-back/.mvn/wrapper/maven-wrapper.properties
+
+# Arquivos compilados
+p2-back/**/*.class
+p2-back/**/*.jar
+p2-back/**/*.war
+p2-back/**/*.ear
+
+# IDEs
+p2-back/.idea/
+p2-back/*.iml
+p2-back/*.iws
+p2-back/*.ipr
+p2-back/.classpath
+p2-back/.project
+p2-back/.settings/
+p2-back/.vscode/
+p2-back/.apt_generated/
+p2-back/.factorypath
+p2-back/.springBeans
+p2-back/.sts4-cache/
+
+# ===========================================
+# Frontend - Node.js
+# ===========================================
+
+p2-front/node_modules/
+p2-front/.pnp
+p2-front/.pnp.js
+p2-front/.yarn/cache
+p2-front/.yarn/unplugged
+p2-front/.yarn/build-state.yml
+p2-front/.yarn/install-state.gz
+
+# Logs
+p2-front/*.log
+p2-front/npm-debug.log*
+p2-front/yarn-debug.log*
+p2-front/yarn-error.log*
+p2-front/lerna-debug.log*
+p2-front/.npm
+p2-front/.eslintcache
+
+# Arquivos gerados - Uploads e exports
+p2-front/uploads/
+p2-front/**/*.txt
+p2-front/**/*.csv
+p2-front/dist/
+p2-front/build/
+
+# Cache
+p2-front/.cache/
+p2-front/.parcel-cache/
+p2-front/.next/
+p2-front/.nuxt/
+p2-front/.vuepress/dist/
+
+# IDEs
+p2-front/.vscode/
+p2-front/.idea/
+p2-front/*.swp
+p2-front/*.swo
+p2-front/.DS_Store
+
+# ===========================================
+# Docker
+# ===========================================
+
+# Arquivos temporários do Docker
+**/.dockerignore.local
+**/docker-compose.override.yml
+**/docker-compose.*.local.yml
+
+# ===========================================
+# Arquivos Sensíveis - AWS e Credenciais
+# ===========================================
+
+# Arquivos JSON com credenciais AWS (Lambda, EC2, etc)
+arquivos/*.json
+arquivos/*AWS*
+arquivos/*Lambda*
+arquivos/*EC2*
+
+# Mas permite a imagem de arquitetura
+!arquivos/arquitetura-cloud.png
+
+# Chaves SSH privadas
+**/*.pem
+**/*.key
+**/id_rsa
+**/id_rsa.pub
+**/id_ed25519
+**/id_ed25519.pub
+
+# ===========================================
+# Arquivos Temporários e de Sistema
+# ===========================================
+
+# Sistema Operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editores
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs genéricos
+*.log
+logs/
+*.log.*
+
+# Arquivos de backup
+*.bak
+*.backup
+*.tmp
+*.temp
+
+# ===========================================
+# Arquivos ZIP de Deploy
+# ===========================================
+
+# Pacotes Lambda
+p2-cloud-terraform/lambda-function.zip
+p2-front/lambda-function.zip
+
+# Outros pacotes
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+
+# ===========================================
+# Arquivos de Teste e Desenvolvimento
+# ===========================================
+
+# Cobertura de código
+**/coverage/
+**/.nyc_output/
+**/.coverage
+**/htmlcov/
+
+# Arquivos de teste temporários
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+
+# ===========================================
+# Manter Arquivos de Exemplo
+# ===========================================
+
+# Não ignorar arquivos de exemplo
+!p2-back/env-example
+!p2-front/.env.example
+!**/*.example
+!**/*.sample
+!**/*.template
+

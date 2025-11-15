@@ -1,0 +1,10 @@
+SPRING_DATASOURCE_URL=jdbc:postgresql://seu-host:5432/barbearia
+SPRING_DATASOURCE_USERNAME=seu-usuario
+SPRING_DATASOURCE_PASSWORD=sua-senha
+SPRING_DATASOURCE_DRIVER=org.postgresql.Driver
+
+# Opcional: sobrescrever configurações do JPA
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+SPRING_JPA_SHOW_SQL=true
+SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+

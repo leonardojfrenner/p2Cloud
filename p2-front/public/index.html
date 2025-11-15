@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Barbearia — Agendamento</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <img class="hero-banner" src="img/banner.png" alt="Banner Barbearia" />
+      <div class="hero-overlay">
+        <img class="logo" src="img/logo-barber.png" alt="Logo" />
+        <h1>Barbearia Central</h1>
+        <p class="subtitle">Agende seu horário com facilidade</p>
+        <div class="hero-actions">
+          <a class="btn" href="cadastro.html">Cadastrar Barbearia</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card grid">
+        <div class="col">
+          <h2>📍 Seleção da Barbearia</h2>
+          <form id="booking-form">
+            <label>
+              Barbearia
+              <select name="barbearia" id="barbearia-select" required>
+                <option value="">Carregando barbearias...</option>
+              </select>
+            </label>
+
+            <h2>👤 Cadastro do Cliente</h2>
+            <label>
+              Nome
+              <input name="nome" type="text" required minlength="2" placeholder="Seu nome" />
+            </label>
+
+            <label>
+              CPF <span style="color: #999; font-size: 0.9em;">(opcional)</span>
+              <input name="cpf" type="text" maxlength="14" placeholder="Digite apenas números" data-mask="cpf" />
+            </label>
+
+            <label>
+              Telefone
+              <input name="telefone" type="tel" placeholder="11999990000" />
+            </label>
+
+            <label>
+              E-mail
+              <input name="email" type="email" placeholder="seu@exemplo.com" />
+            </label>
+
+            <label>
+              Endereço
+              <input name="endereco" type="text" placeholder="Rua Exemplo, 123" />
+            </label>
+        </div>
+
+        <div class="col">
+          <h2>📅 Agendamento</h2>
+            <label>
+              Data e hora
+              <input name="datetime" type="datetime-local" required />
+            </label>
+
+            <label>
+              Serviço
+              <select name="servico" id="servico-select" required>
+                <option value="">Selecione primeiro uma barbearia...</option>
+              </select>
+            </label>
+
+            <div class="service-info" hidden>
+              <p class="duration">⏱️ Duração estimada: <span id="service-duration">--</span></p>
+              <p class="staff">👥 Profissionais disponíveis: <span id="service-staff">--</span></p>
+              <p class="valor">💰 Valor: <span id="service-value">--</span></p>
+            </div>
+
+            <label>
+              Observações
+              <textarea name="observacoes" rows="2" placeholder="Alguma observação adicional?"></textarea>
+            </label>
+
+            <div class="actions">
+              <button type="submit" class="btn primary">Agendar</button>
+              <button type="button" id="reset-btn" class="btn">Limpar</button>
+              <button type="button" id="test-gateway-btn" class="btn" style="background: #28a745; color: white;">Ver Agendamentos</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="result" class="card" hidden>
+        <h3>✅ Confirmação</h3>
+        <p id="result-text"></p>
+        <div class="actions">
+          <button id="new-book" class="btn primary">Novo agendamento</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal para exibir agendamentos do S3 -->
+    <div id="agendamentos-modal" class="modal" hidden>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>📋 Agendamentos no S3</h2>
+          <button class="modal-close" id="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="modal-loading" class="modal-loading">
+            <p>Carregando agendamentos...</p>
+          </div>
+          <div id="modal-content" class="modal-agendamentos" hidden>
+            <div class="agendamentos-stats">
+              <p><strong>Total:</strong> <span id="modal-total">0</span> agendamento(s)</p>
+            </div>
+            <div id="modal-list" class="agendamentos-list"></div>
+          </div>
+          <div id="modal-error" class="modal-error" hidden>
+            <p id="modal-error-text"></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" id="modal-close-footer">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>© Barbearia Central</p>
+    </footer>
+
+    <script src="/static/config.js?v=2"></script>
+    <script src="/static/api.js?v=2"></script>
+    <script src="/static/export-utils.js?v=2"></script>
+    <script src="/static/app.js?v=2"></script>
+  </body>
+</html>

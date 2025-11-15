@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Cadastro da Barbearia</title>
+		<link rel="stylesheet" href="/static/styles.css" />
+	</head>
+	<body>
+		<header class="hero">
+			<img class="hero-banner" src="img/banner.png" alt="Banner Barbearia" />
+			<div class="hero-overlay">
+				<img class="logo" src="img/logo-barber.png" alt="Logo" />
+				<h1>Cadastro da Barbearia</h1>
+				<p class="subtitle">Cadastre sua barbearia e comece a receber agendamentos</p>
+			</div>
+		</header>
+
+		<main class="container">
+			<section class="card">
+				<h2>🏢 Informações da Barbearia</h2>
+				<form id="barbearia-form">
+					<label>
+						Nome da Barbearia
+						<input name="nome" type="text" required minlength="2" placeholder="Ex: Barbearia Central" />
+					</label>
+
+					<label>
+						CNPJ
+						<input name="cnpj" type="text" maxlength="18" placeholder="Digite apenas números" data-mask="cnpj" />
+					</label>
+
+					<label>
+						Telefone
+						<input name="telefone" type="tel" placeholder="11999990000" />
+					</label>
+
+					<label>
+						E-mail
+						<input name="email" type="email" placeholder="contato@barbearia.com" />
+					</label>
+
+					<label>
+						Endereço
+						<input name="endereco" type="text" placeholder="Rua Exemplo, 123" />
+					</label>
+
+					<label>
+						Serviços oferecidos
+						<select name="servicos" multiple>
+							<option value="corte">Corte de Cabelo</option>
+							<option value="barba">Barba</option>
+							<option value="limpeza">Limpeza de Pele</option>
+						</select>
+						<small>Segure Ctrl (Windows) ou Cmd (Mac) para selecionar vários</small>
+					</label>
+
+					<label>
+						Funcionários (separe por vírgula)
+						<input name="funcionarios" type="text" placeholder="João, Maria, Pedro" />
+					</label>
+
+					<div class="actions">
+						<button type="submit" class="btn primary">Cadastrar</button>
+						<a class="btn" href="/app">Voltar</a>
+					</div>
+				</form>
+			</section>
+
+			<section id="cad-result" class="card" hidden>
+				<h3>✅ Barbearia cadastrada</h3>
+				<p id="cad-text"></p>
+				<div class="actions">
+					<a class="btn primary" href="/app">Ir para a interface</a>
+				</div>
+			</section>
+		</main>
+
+		<footer class="footer">
+			<p>© Barbearia Central</p>
+		</footer>
+
+		<script src="/static/config.js"></script>
+		<script src="/static/api.js"></script>
+		<script>
+			// máscara simples de CNPJ (formata enquanto digita)
+			function formatCNPJ(value) {
+				const v = value.replace(/\D/g, '').slice(0,14);
+				if (v.length <= 2) return v;
+				if (v.length <= 5) return v.replace(/(\d{2})(\d+)/, '$1.$2');
+				if (v.length <= 8) return v.replace(/(\d{2})(\d{3})(\d+)/, '$1.$2.$3');
+				if (v.length <= 12) return v.replace(/(\d{2})(\d{3})(\d{3})(\d+)/, '$1.$2.$3/$4');
+				return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/, '$1.$2.$3/$4-$5');
+			}
+
+			// Remove formatação do CNPJ (apenas números)
+			function limparCNPJ(cnpj) {
+				return cnpj.replace(/\D/g, '');
+			}
+
+			document.addEventListener('DOMContentLoaded', async () => {
+				const form = document.getElementById('barbearia-form');
+				const cnpjInput = form.querySelector('input[data-mask="cnpj"]');
+				const resultSection = document.getElementById('cad-result');
+				const resultText = document.getElementById('cad-text');
+				const servicosSelect = form.querySelector('select[name="servicos"]');
+				const funcionariosInput = form.querySelector('input[name="funcionarios"]');
+
+				if (cnpjInput) {
+					cnpjInput.addEventListener('input', (e) => {
+						const clean = e.target.value.replace(/\D/g, '').slice(0,14);
+						e.target.value = formatCNPJ(clean);
+					});
+				}
+
+				form.addEventListener('submit', async (ev) => {
+					ev.preventDefault();
+					
+					const submitBtn = form.querySelector('button[type="submit"]');
+					submitBtn.disabled = true;
+					submitBtn.textContent = 'Cadastrando...';
+
+					try {
+						const fd = new FormData(form);
+						
+						// Preparar dados da barbearia
+						const barbeariaData = {
+							nome: fd.get('nome'),
+							cnpj: limparCNPJ(fd.get('cnpj') || ''),
+							telefone: fd.get('telefone') || '',
+							email: fd.get('email') || '',
+							endereco: fd.get('endereco') || ''
+						};
+
+						// Criar barbearia
+						const barbearia = await BarbeariaAPI.criar(barbeariaData);
+						
+						// Criar serviços se houver
+						const servicosSelecionados = Array.from(servicosSelect.selectedOptions).map(o => o.value);
+						const funcionarios = (fd.get('funcionarios') || '').split(',').map(s => s.trim()).filter(Boolean);
+						
+						const servicosCriados = [];
+						if (servicosSelecionados.length > 0 && funcionarios.length > 0) {
+							// Mapear serviços selecionados para dados completos
+							const servicosMap = {
+								corte: { nome: 'Corte de Cabelo', valor: 45.00, duracao: 30, descricao: 'Corte masculino com técnicas modernas' },
+								barba: { nome: 'Barba', valor: 35.00, duracao: 30, descricao: 'Barba tradicional com toalha quente' },
+								limpeza: { nome: 'Limpeza de Pele', valor: 75.00, duracao: 45, descricao: 'Limpeza facial completa' }
+							};
+
+							for (const servicoId of servicosSelecionados) {
+								if (servicosMap[servicoId]) {
+									const servicoData = {
+										...servicosMap[servicoId],
+										funcionarios: funcionarios
+									};
+									try {
+										const servico = await ServicoAPI.criarAssociadoBarbearia(barbearia.id, servicoData);
+										servicosCriados.push(servico);
+									} catch (err) {
+										console.error(`Erro ao criar serviço ${servicoId}:`, err);
+									}
+								}
+							}
+						}
+
+						resultText.textContent = `Barbearia "${barbearia.nome}" cadastrada com sucesso!${servicosCriados.length > 0 ? ` ${servicosCriados.length} serviço(s) criado(s).` : ''}`;
+						resultSection.hidden = false;
+						form.hidden = true;
+					} catch (error) {
+						alert('Erro ao cadastrar barbearia: ' + error.message);
+						console.error('Erro:', error);
+					} finally {
+						submitBtn.disabled = false;
+						submitBtn.textContent = 'Cadastrar';
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
