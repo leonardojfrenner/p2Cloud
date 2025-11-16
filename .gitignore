@@ -139,9 +139,8 @@ p2-front/.DS_Store
 
 # Arquivos JSON com credenciais AWS (Lambda, EC2, etc)
 arquivos/*.json
-arquivos/*AWS*
-arquivos/*Lambda*
-arquivos/*EC2*
+# Não ignorar PNGs de ilustração
+!arquivos/*.png
 
 # Mas permite a imagem de arquitetura
 !arquivos/arquitetura-cloud.png
