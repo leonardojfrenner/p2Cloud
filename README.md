@@ -27,22 +27,31 @@ O P2Cloud é uma aplicação full-stack para gerenciamento de agendamentos de ba
 
 ![Arquitetura Cloud](arquivos/arquitetura-cloud.png)
 
-A arquitetura do sistema é baseada em containers Docker separados e serviços na AWS:
+Arquitetura atual baseada em AWS padrão (sem Lightsail), alinhada ao `p2-cloud-terraform/main.tf`:
 
 ### Componentes de Infraestrutura (AWS)
 
-1. **EC2 (Frontend)**: Instância Ubuntu rodando container Docker do frontend
-2. **Lightsail Container Service (Backend)**: Container service hospedando a API Java Spring Boot
-3. **Lightsail Database**: Banco de dados PostgreSQL 17
-4. **Lightsail Bucket**: Armazenamento de objetos (arquivos de agendamentos)
-5. **Lambda Function**: Funções serverless para processamento
-6. **API Gateway**: Gateway HTTP para integração com Lambda
+1. **EC2 (Frontend)**: Instância Ubuntu que executa o container do frontend (porta 80)
+2. **ECS Fargate (Backend)**: Serviço gerenciado rodando a API Spring Boot em containers
+3. **Application Load Balancer (ALB)**: Balanceia o tráfego HTTP para o backend no ECS
+4. **RDS PostgreSQL**: Banco gerenciado (PostgreSQL 16) acessado pelo backend
+5. **S3**: Bucket para armazenar arquivos de exportação
+6. **IAM**: Usuário/roles para acesso ao S3 (EC2, Lambda, ECS)
+7. **Lambda + API Gateway**: Função serverless exposta via HTTP API (ex.: rota `/hello`)
+8. **CloudWatch Logs**: Logs do ECS (e outros serviços)
 
 ### Componentes da Aplicação
 
 - **Backend (p2-back)**: API REST desenvolvida em Java Spring Boot
 - **Frontend (p2-front)**: Interface web desenvolvida em Node.js/Express
 - **Terraform (p2-cloud-terraform)**: Infraestrutura como código para provisionamento na AWS
+
+### Galeria de componentes
+
+![AWS EC2](arquivos/aws-ec2.png)
+![AWS ECS](arquivos/aws-ecs.png)
+![AWS RDS](arquivos/aws-rds.png)
+![AWS Lambda](arquivos/aws-lambda.png)
 
 ## 📦 Componentes
 
@@ -80,14 +89,15 @@ Interface web desenvolvida em **Node.js** com **Express**, oferecendo:
 
 Infraestrutura como código para provisionamento completo na AWS:
 
-**Recursos provisionados:**
-- EC2 instance para frontend com security groups
-- Lightsail Database (PostgreSQL 17)
-- Lightsail Container Service para backend
-- Lightsail Bucket para armazenamento
-- Lambda function com role IAM
-- API Gateway HTTP API
-- Integrações entre serviços
+**Recursos provisionados (AWS padrão):**
+- EC2 para frontend (com Security Group dedicado)
+- ECS Fargate para backend (com CloudWatch Logs)
+- Application Load Balancer + Target Group + Listener para o backend
+- RDS PostgreSQL 16 (com Subnet Group e Security Group)
+- S3 (versionamento, CORS e bucket policy)
+- IAM (user para S3 com access keys e roles para ECS/Lambda)
+- Lambda function (Node.js) e API Gateway HTTP API
+- Outputs organizados para facilitar integração (URLs, endpoints, chaves)
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -229,8 +239,8 @@ TF_VAR_BUCKET_SECRET_ACCESS_KEY=your-bucket-secret-key
 
 ```bash
 cd p2-cloud-terraform
-# Copie app.env.example para app.env e preencha com suas credenciais
-# IMPORTANTE: app.env está no .gitignore
+# Crie um app.env (não comite) e preencha com suas credenciais
+# IMPORTANTE: app.env está no .gitignore e não deve ir ao Git
 ```
 
 2. **Carregue as variáveis e inicialize o Terraform:**
@@ -257,13 +267,12 @@ terraform plan
 terraform apply
 ```
 
-O Terraform irá provisionar:
-- Instância EC2 com frontend
-- Lightsail Database
-- Lightsail Container Service com backend
-- Lightsail Bucket
-- Lambda function
-- API Gateway
+Principais outputs úteis após o apply:
+- `backend_alb_url`/`backend_alb_dns`: URL/DNS do ALB para o backend
+- `api_gateway_url`: endpoint público do API Gateway
+- `database_connection_string`: JDBC para o RDS
+- `bucket_name` e `bucket_regional_domain_name`: infos do S3
+- `s3_access_key_id` e `s3_secret_access_key` (sensível): chaves para uso no EC2/Lambda
 
 ### Build e Push das Imagens Docker
 
